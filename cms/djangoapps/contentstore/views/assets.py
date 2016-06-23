@@ -5,7 +5,6 @@ import json
 
 from django.http import HttpResponseBadRequest
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_http_methods, require_POST
 from django.conf import settings
 
@@ -35,7 +34,6 @@ __all__ = ['assets_handler']
 
 
 @login_required
-@ensure_csrf_cookie
 def assets_handler(request, course_key_string=None, asset_key_string=None):
     """
     The restful handler for assets.
@@ -208,7 +206,6 @@ def get_file_size(upload_file):
 
 
 @require_POST
-@ensure_csrf_cookie
 @login_required
 def _upload_asset(request, course_key):
     '''
@@ -301,7 +298,6 @@ def _upload_asset(request, course_key):
 
 @require_http_methods(("DELETE", "POST", "PUT"))
 @login_required
-@ensure_csrf_cookie
 def _update_asset(request, course_key, asset_key):
     """
     restful CRUD operations for a course asset.
