@@ -345,28 +345,19 @@ class CheckboxProblemTypeTest(ProblemTypeTestBase, ProblemTypeTestMixin):
             self.problem_page.click_choice("choice_1")
 
     @attr('shard_7')
-    def test_can_show_hide_answer(self):
+    def test_can_show_answer(self):
         """
-        Scenario: Verifies that show/hide answer button is working as expected.
+        Scenario: Verifies that show answer button is working as expected.
 
         Given that I am on courseware page
         And I can see a CAPA problem with show answer button
         When I click "Show Answer" button
-        Then I should see "Hide Answer" text on button
         And I should see question's solution
         And I should see correct choices highlighted
-        When I click "Hide Answer" button
-        Then I should see "Show Answer" text on button
-        And I should not see question's solution
-        And I should not see correct choices highlighted
         """
-        self.problem_page.click_show_hide_button()
+        self.problem_page.click_show()
         self.assertTrue(self.problem_page.is_solution_tag_present())
         self.assertTrue(self.problem_page.is_correct_choice_highlighted(correct_choices=[1, 3]))
-
-        self.problem_page.click_show_hide_button()
-        self.assertFalse(self.problem_page.is_solution_tag_present())
-        self.assertFalse(self.problem_page.is_correct_choice_highlighted(correct_choices=[1, 3]))
 
 
 class MultipleChoiceProblemTypeTest(ProblemTypeTestBase, ProblemTypeTestMixin):
