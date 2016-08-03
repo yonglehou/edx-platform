@@ -50,7 +50,7 @@ from openedx.core.djangolib.js_utils import js_escaped_string
                    .attr("id", "purchase_workflow")
                    .attr("name", "purchase_workflow").val(purchase_workflow);
 
-          HtmlUtils.append(""#class_enroll_form"", HtmlUtils.HTML($(event_target_input)));
+          HtmlUtils.append("#class_enroll_form", HtmlUtils.HTML($(event_target_input)));
           var enroll_form = $("#class_enroll_form");
           enroll_form.submit();
           event.preventDefault();
