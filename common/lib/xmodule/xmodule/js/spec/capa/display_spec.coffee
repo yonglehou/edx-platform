@@ -376,11 +376,11 @@ describe 'Problem', ->
 
     it 'render the returned content', ->
       spyOn($, 'postWithPrefix').and.callFake (url, answers, callback) ->
-        callback html: "Reset"
+        callback html: '<h3 class="hd hd-2 problem-header">Problem Header</h3><span>Reset</span>'
         promise =
             always: (callable) -> callable()
       @problem.reset()
-      expect(@problem.el.html()).toEqual 'Reset'
+      expect(@problem.el.html()).toEqual '<h3 class="hd hd-2 problem-header">Problem Header</h3><span>Reset</span>'
 
     it 'tests if all the buttons are disabled and the text of check button remains same while resetting', (done) ->
       deferred = $.Deferred()
