@@ -542,7 +542,6 @@ def click_button(data_attr, index=0):
         button_text=data_attr
     )
     world.browser.find_by_xpath(xpath)[index].click()
-    wait_for_js_to_load()
 
 
 @world.absorb

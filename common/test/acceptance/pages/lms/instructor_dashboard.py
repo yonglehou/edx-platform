@@ -584,7 +584,7 @@ class CohortManagementSection(PageObject):
         """
         Click on the link to the Data Download Page.
         """
-        self.q(css=self._bounded_selector("a.link-cross-reference[data-section=data_download]")).first.click()
+        self.q(css=self._bounded_selector('[data-section="data_download"]')).first.click()
 
     def upload_cohort_file(self, filename):
         """
