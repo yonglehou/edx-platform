@@ -3,7 +3,6 @@ Problem Page.
 """
 from bok_choy.page_object import PageObject
 
-
 class ProblemPage(PageObject):
     """
     View of problem page.
@@ -235,3 +234,10 @@ class ProblemPage(PageObject):
         Return a list of question descriptions of the problem.
         """
         return self.q(css="div.problem .wrapper-problem-response .question-description").text
+
+    def problem_progress_graded_value(self):
+        """
+        Return problem progress text which contains weight of problem, if it is graded, and the student's current score.
+        """
+        self.wait_for_element_visibility('.problem-progress', "Problem progress is visible")
+        return self.q(css='.problem-progress').text[0]
