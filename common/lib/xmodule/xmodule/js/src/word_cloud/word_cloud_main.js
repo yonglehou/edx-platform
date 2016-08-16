@@ -17,6 +17,11 @@
         'gettext',
         'edx-ui-toolkit/js/utils/html-utils'
     ], function(gettext, HtmlUtils) {
+
+        function generateUniqueId(word_cloud_id, unique_id) {
+            return '_wc_' + word_cloud_id + '_' + unique_id;
+        }
+
         /**
          * @function WordCloudMain
          *
@@ -251,8 +256,17 @@
                 HtmlUtils.HTML(studentWordsStr)
             );
 
-            cloudSectionEl.find('.your_words').end().find('.total_num_words')
-                .text(response.total_count);
+            HtmlUtils.setHtml(
+                cloudSectionEl.find('.your_words').end().find('.total_num_words'),
+                HtmlUtils.interpolateHtml(
+                    gettext("{start_strong}{total}{end_strong} words submitted in total."),
+                    {
+                        start_strong: HtmlUtils.HTML("<strong>"),
+                        end_strong: HtmlUtils.HTML("</strong>"),
+                        total: response.total_count
+                    }
+                )
+            );
 
             $(cloudSectionEl.attr('id') + ' .word_cloud').empty();
 
@@ -266,11 +280,14 @@
                     .data(words)
                     .enter()
                     .append('g')
+                    .attr('data-id', function(d) {
+                        return Math.floor(Math.random() * (999 - 1 + 1)) + 1;
+                    })
                     .attr('aria-describedby', function(d) {
                         return HtmlUtils.interpolateHtml(
                             gettext('text_word_{word} title_word_{word}'),
                             {
-                                word: d.text.replace(/\s/g, '_')
+                                word: generateUniqueId(cloudSectionEl.attr('id'), $(this).data('id'))
                             }
                         );
                     });
@@ -281,7 +298,7 @@
                     return HtmlUtils.interpolateHtml(
                         gettext('title_word_{word}'),
                         {
-                            word: d.text.replace(/\s/g, '_')
+                            word: generateUniqueId(cloudSectionEl.attr('id'), $(this).parent().data('id'))
                         }
                     );
                 })
@@ -305,7 +322,7 @@
                     return HtmlUtils.interpolateHtml(
                         gettext('text_word_{word}'),
                         {
-                            word: d.text.replace(/\s/g, '_')
+                            word: generateUniqueId(cloudSectionEl.attr('id'), $(this).parent().data('id'))
                         }
                     );
                 })
