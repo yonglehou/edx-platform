@@ -6,6 +6,8 @@ from bok_choy.promise import EmptyPromise
 
 from common.test.acceptance.pages.studio import BASE_URL
 from common.test.acceptance.pages.studio.course_page import CoursePage
+from common.test.acceptance.pages.studio.utils import NAV_HELP_NOT_SIGNED_IN_CSS
+from common.test.acceptance.pages.common.utils import click_css
 
 
 class LoginMixin(object):
@@ -42,6 +44,18 @@ class LoginPage(PageObject, LoginMixin):
 
     def is_browser_on_page(self):
         return self.q(css='body.view-signin').visible
+
+    def get_nav_help_css(self):
+        """
+        Returns the unique css of nav help DOM element
+        """
+        return NAV_HELP_NOT_SIGNED_IN_CSS
+
+    def click_nav_help(self):
+        """
+        Clicks on the help link in the navigation bar.
+        """
+        click_css(page=self, css=NAV_HELP_NOT_SIGNED_IN_CSS, require_notification=False)
 
 
 class CourseOutlineSignInRedirectPage(CoursePage, LoginMixin):

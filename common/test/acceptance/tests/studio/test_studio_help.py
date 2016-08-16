@@ -14,15 +14,12 @@ from common.test.acceptance.pages.studio.utils import click_css
 from common.test.acceptance.pages.studio.library import LibraryPage
 from common.test.acceptance.pages.studio.users import LibraryUsersPage
 from common.test.acceptance.tests.helpers import (
-    assert_links,
-    assert_help_is_open
+    assert_link,
+    get_expected_help_element_attributes,
+    assert_opened_help_link_is_correct
 )
 from common.test.acceptance.pages.studio.import_export import ExportLibraryPage, ImportLibraryPage
 from common.test.acceptance.pages.studio.auto_auth import AutoAuthPage
-
-
-NAV_HELP_CSS = '.nav-item.nav-account-help a'
-SIDE_BAR_HELP_CSS = '.bit.external-help a'
 
 
 class StudioHelpTest(StudioCourseTest):
@@ -65,57 +62,74 @@ class StudioHelpTest(StudioCourseTest):
             )
 
 
-class SignInAndSignUpHelpTest(WebAppTest):
+class SignInHelpTest(WebAppTest):
     """
-    Tests help links on 'Sign In' and 'Sign Up' pages.
+    Tests help links on 'Sign In'
     """
     def setUp(self):
-        super(SignInAndSignUpHelpTest, self).setUp()
+        super(SignInHelpTest, self).setUp()
         self.index_page = IndexPage(self.browser)
+        self.index_page.visit()
 
-    def test_help_links_on_signup_and_sign_in_pages(self):
+    def test_sign_in_nav_help(self):
         """
-        Scenario: Help link in navigation bar is working on
-        'Sign Up' and 'Sign In' page.
-        Given that I am on the 'Sign Up' or 'Sign In' page.
+        Scenario: Help link in navigation bar is working on 'Sign In' page.
+        Given that I am on the 'Sign In" page.
+        And I want help about the sign in
         And I click the 'Help' in the navigation bar
         Then Help link should open.
-        And help url should contain 'getting_started/get_started.html'
-
+        And help url should end with 'getting_started/get_started.html'
         """
-        expected_links = [
-            {
-                'element_css': '.nav-item.nav-not-signedin-help a',
-                'text': 'Help',
-                'url': 'http://edx.readthedocs.org/projects/edx-partner-course-staff'
-                       '/en/latest/getting_started/get_started.html',
-                'page': 'index-sign-in'
-            },
-            {
-                'element_css': '.nav-item.nav-not-signedin-help a',
-                'text': 'Help',
-                'url': 'http://edx.readthedocs.org/projects/edx-partner-course-staff/'
-                       'en/latest/getting_started/get_started.html',
-                'page': 'index-sign-up'
-            }
-        ]
+        sign_in_page = self.index_page.click_sign_in()
+        # The href we want to see in anchor help element.
+        href = 'http://edx.readthedocs.org/projects/edx-partner-course-staff/' \
+               'en/latest/getting_started/get_started.html'
 
-        for expected_link in expected_links:
-            self.index_page.visit()
-            page = expected_link['page']
+        # Expected attributes of anchor help element
+        expected_link = get_expected_help_element_attributes(href)
+        # Get actual anchor help element from the page.
+        actual_link = get_element(sign_in_page, sign_in_page.get_nav_help_css())
+        # Assert that 'href' and text are the same as expected.
+        assert_link(self, expected_link, actual_link)
+        # Click the help.
+        sign_in_page.click_nav_help()
+        # Assert that opened link is correct
+        assert_opened_help_link_is_correct(self, href)
 
-            if page == 'index-sign-in':
-                page = self.index_page.click_sign_in()
-            else:
-                page = self.index_page.click_sign_up()
 
-            element_css = expected_link['element_css']
-            actual_link = get_element(page, element_css)
-            # Assert that link on DOM element are same as expected.
-            assert_links(self, expected_link, actual_link)
-            # Click the help link and assert that correct link is opened.
-            click_css(page, element_css, 0, False)
-            assert_help_is_open(self, expected_link['url'])
+class SignUpHelpTest(WebAppTest):
+    """
+    Tests help links on 'Sign Up' pages.
+    """
+    def setUp(self):
+        super(SignUpHelpTest, self).setUp()
+        self.index_page = IndexPage(self.browser)
+        self.index_page.visit()
+
+    def test_sign_up_nav_help(self):
+        """
+        Scenario: Help link in navigation bar is working on 'Sign Up' page.
+        Given that I am on the 'Sign Up" page.
+        And I want help about the sign up
+        And I click the 'Help' in the navigation bar
+        Then Help link should open.
+        And help url should end with 'getting_started/get_started.html'
+        """
+        sign_up_page = self.index_page.click_sign_up()
+        # The href we want to see in anchor help element.
+        href = 'http://edx.readthedocs.org/projects/edx-partner-course-staff/' \
+               'en/latest/getting_started/get_started.html'
+
+        # Expected attributes of anchor help element
+        expected_link = get_expected_help_element_attributes(href)
+        # Get actual anchor help element from the page.
+        actual_link = get_element(sign_up_page, sign_up_page.get_nav_help_css())
+        # Assert that 'href' and text are the same as expected.
+        assert_link(self, expected_link, actual_link)
+        # Click the help.
+        sign_up_page.click_nav_help()
+        # Assert that opened link is correct
+        assert_opened_help_link_is_correct(self, href)
 
 
 class HomeHelpTest(StudioCourseTest):
@@ -125,149 +139,227 @@ class HomeHelpTest(StudioCourseTest):
     def setUp(self):  # pylint: disable=arguments-differ
         super(HomeHelpTest, self).setUp()
         self.home_page = HomePage(self.browser)
+        self.home_page.visit()
 
-    def test_course_home_help(self):
+    def test_course_home_nav_help(self):
         """
-        Scenario: Help link in navigation and side bar is working on 'Home'(Courses tab) page.
+        Scenario: Help link in navigation bar is working on 'Home'(Courses tab) page.
         Given that I am on the 'Home'(Courses tab) page.
+        And I want help about the courses
         And I click the 'Help' in the navigation bar
-        Then help link should open.
-        And help url should contain 'getting_started/get_started.html'
+        Then Help link should open.
+        And help url should end with 'getting_started/get_started.html'
+        """
+        # The href we want to see in anchor help element.
+        href = 'http://edx.readthedocs.org/projects/edx-partner-course-staff/' \
+               'en/latest/getting_started/get_started.html'
 
+        # Expected attributes of anchor help element
+        expected_link = get_expected_help_element_attributes(href)
+        # Get actual anchor help element from the page.
+        actual_link = get_element(self.home_page, self.home_page.get_nav_help_css())
+        # Assert that 'href' and text are the same as expected.
+        assert_link(self, expected_link, actual_link)
+        # Click the help.
+        self.home_page.click_nav_help()
+        # Assert that opened link is correct
+        assert_opened_help_link_is_correct(self, href)
+
+    def test_course_home_side_bar_help(self):
+        """
+        Scenario: Help link in sidebar links is working on 'Home'(Courses tab) page.
         Given that I am on the 'Home'(Courses tab) page.
         And I want help about the courses
         And I click the 'Getting Started with edX Studio' in the sidebar links
         Then Help link should open.
-        And help url should contain 'getting_started/get_started.html'
-
+        And help url should end with 'getting_started/get_started.html'
         """
-        expected_links = [
-            {
-                'element_css': NAV_HELP_CSS,
-                'text': 'Help',
-                'url': 'http://edx.readthedocs.org/projects/edx-partner-course-staff/'
-                       'en/latest/getting_started/get_started.html'
-            },
-            {
-                'element_css': '.bit li.action-item a',
-                'text': 'Getting Started with edX Studio',
-                'url': 'http://edx.readthedocs.org/projects/edx-partner-course-staff/'
-                       'en/latest/getting_started/get_started.html'
-            }
-        ]
-
-        for expected_link in expected_links:
-            self.home_page.visit()
-            element_css = expected_link['element_css']
-            actual_link = get_element(self.home_page, element_css)
-            # Assert that link on DOM element are same as expected.
-            assert_links(self, expected_link, actual_link)
-            # Click the help link and assert that correct link is opened.
-            click_css(self.home_page, element_css, 0, False)
-            assert_help_is_open(self, expected_link['url'])
+        # The href we want to see in anchor help element.
+        href = 'http://edx.readthedocs.org/projects/edx-partner-course-staff/' \
+               'en/latest/getting_started/get_started.html'
+        # Expected attributes of anchor help element
+        expected_link = get_expected_help_element_attributes(href, 'Getting Started with edX Studio')
+        # Get actual anchor help element from the page.
+        actual_link = get_element(self.home_page, self.home_page.get_side_bar_help_css())
+        # Assert that 'href' and text are the same as expected.
+        assert_link(self, expected_link, actual_link)
+        # Click the help.
+        self.home_page.click_side_bar_help()
+        # Assert that opened link is correct
+        assert_opened_help_link_is_correct(self, href)
 
 
-class NewCourseAndNewLibraryHelpTest(WebAppTest):
+class NewCourseHelpTest(WebAppTest):
     """
-    Test help links while creating new course and new library
+    Test help links while creating a new course.
     """
     def setUp(self):
-        super(NewCourseAndNewLibraryHelpTest, self).setUp()
+        super(NewCourseHelpTest, self).setUp()
         self.auth_page = AutoAuthPage(self.browser, staff=True)
         self.dashboard_page = DashboardPage(self.browser)
         self.program_page = DashboardPageWithPrograms(self.browser)
+        self.auth_page.visit()
+        self.dashboard_page.visit()
 
-    def test_new_course_and_new_library_help(self):
+    def test_course_create_nav_help(self):
         """
-        Scenario: Help link in navigation bar and sidebar is working on 'Create a New Course'
-        and 'Create a new Library' page in the dashboard. Also Help link in navigation bar
-        on 'Library tab' at dashboard page should be working.
-
+        Scenario: Help link in navigation bar is working on 'Create a New Course' page in the dashboard.
         Given that I am on the 'Create a New Course' page in the dashboard.
         And I want help about the process
         And I click the 'Help' in the navigation bar
         Then Help link should open.
-        And help url should contain 'getting_started/get_started.html'
+        And help url should end with 'getting_started/get_started.html'
+        """
+        self.assertTrue(self.dashboard_page.new_course_button.present)
+        self.dashboard_page.click_new_course_button()
+        # The href we want to see in anchor help element.
+        href = 'http://edx.readthedocs.org/projects/edx-partner-course-staff' \
+               '/en/latest/getting_started/get_started.html'
 
+        # Expected attributes of anchor help element
+        expected_link = get_expected_help_element_attributes(href)
+        # Get actual anchor help element from the page.
+        actual_link = get_element(self.dashboard_page, self.dashboard_page.get_nav_help_css())
+        # Assert that 'href' and text are the same as expected.
+        assert_link(self, expected_link, actual_link)
+        # Click the help.
+        self.dashboard_page.click_nav_help()
+        # Assert that opened link is correct.
+        assert_opened_help_link_is_correct(self, href)
+
+    def test_course_create_side_bar_help(self):
+        """
+        Scenario: Help link in sidebar links is working on 'Create a New Course' page in the dashboard.
         Given that I am on the 'Create a New Course' page in the dashboard.
         And I want help about the process
         And I click the 'Getting Started with edX Studio' in the sidebar links
         Then Help link should open.
-        And help url should contain 'getting_started/get_started.html'
+        And help url should end with 'getting_started/get_started.html'
+        """
+        self.assertTrue(self.dashboard_page.new_course_button.present)
+        self.dashboard_page.click_new_course_button()
+        # The href we want to see in anchor help element.
+        href = 'http://edx.readthedocs.org/projects/edx-partner-course-staff/' \
+               'en/latest/getting_started/get_started.html'
 
+        # Expected attributes of anchor help element
+        expected_link = get_expected_help_element_attributes(href, 'Getting Started with edX Studio')
+        # Get actual anchor help element from the page.
+        actual_link = get_element(self.dashboard_page, self.dashboard_page.get_side_bar_help_css())
+        # Assert that 'href' and text are the same as expected.
+        assert_link(self, expected_link, actual_link)
+        # Click the help.
+        self.dashboard_page.click_side_bar_help()
+        # Assert that opened link is correct
+        assert_opened_help_link_is_correct(self, href)
+
+
+class NewLibraryHelpTest(WebAppTest):
+    """
+    Test help links while creating a new library
+    """
+    def setUp(self):
+        super(NewLibraryHelpTest, self).setUp()
+        self.auth_page = AutoAuthPage(self.browser, staff=True)
+        self.dashboard_page = DashboardPage(self.browser)
+        self.program_page = DashboardPageWithPrograms(self.browser)
+        self.auth_page.visit()
+        self.dashboard_page.visit()
+
+    def test_library_create_nav_help(self):
+        """
+        Scenario: Help link in navigation bar is working on 'Create a New Library' page in the dashboard.
         Given that I am on the 'Create a New Library' page in the dashboard.
         And I want help about the process
         And I click the 'Help' in the navigation bar
         Then Help link should open.
-        And help url should contain 'getting_started/get_started.html'
+        And help url should end with 'getting_started/get_started.html'
+        """
+        self.assertTrue(self.dashboard_page.has_new_library_button)
+        self.dashboard_page.click_new_library()
+        # The href we want to see in anchor help element.
+        href = 'http://edx.readthedocs.org/projects/edx-partner-course-staff/' \
+               'en/latest/getting_started/get_started.html'
 
+        # Expected attributes of anchor help element
+        expected_link = get_expected_help_element_attributes(href)
+        # Get actual anchor help element from the page.
+        actual_link = get_element(self.dashboard_page, self.dashboard_page.get_nav_help_css())
+        # Assert that 'href' and text are the same as expected.
+        assert_link(self, expected_link, actual_link)
+        # Click the help.
+        self.dashboard_page.click_nav_help()
+        # Assert that opened link is correct
+        assert_opened_help_link_is_correct(self, href)
+
+    def test_library_create_side_bar_help(self):
+        """
+        Scenario: Help link in sidebar links is working on 'Create a New Library' page in the dashboard.
         Given that I am on the 'Create a New Library' page in the dashboard.
         And I want help about the process
         And I click the 'Getting Started with edX Studio' in the sidebar links
         Then Help link should open.
-        And help url should contain with 'getting_started/get_started.html'
+        And help url should end with 'getting_started/get_started.html'
+        """
+        self.auth_page.visit()
+        self.dashboard_page.visit()
+        self.assertTrue(self.dashboard_page.has_new_library_button)
+        self.dashboard_page.click_new_library()
+        # The href we want to see in anchor help element.
+        href = 'http://edx.readthedocs.org/projects/edx-partner-course-staff/' \
+               'en/latest/getting_started/get_started.html'
 
+        # Expected attributes of anchor help element
+        expected_link = get_expected_help_element_attributes(href, 'Getting Started with edX Studio')
+        # Get actual anchor help element from the page.
+        actual_link = get_element(self.dashboard_page, self.dashboard_page.get_side_bar_help_css())
+        # Assert that 'href' and text are the same as expected.
+        assert_link(self, expected_link, actual_link)
+        # Click the help.
+        self.dashboard_page.click_side_bar_help()
+        # Assert that opened link is correct
+        assert_opened_help_link_is_correct(self, href)
+
+
+class LibraryTabHelpTest(WebAppTest):
+    """
+    Test help links on the library tab present at dashboard.
+    """
+    def setUp(self):
+        super(LibraryTabHelpTest, self).setUp()
+        self.auth_page = AutoAuthPage(self.browser, staff=True)
+        self.dashboard_page = DashboardPage(self.browser)
+        self.program_page = DashboardPageWithPrograms(self.browser)
+        self.auth_page.visit()
+        self.dashboard_page.visit()
+
+    def test_library_tab_nav_help(self):
+        """
+        Scenario: Help link in navigation bar is working on 'Home'(Courses tab) page.
         Given that I am on the 'Home'(Courses tab) page.
         And I want help about the process
         And I click the 'Help' in the navigation bar
         Then Help link should open.
-        And help url should contain 'getting_started/get_started.html'
+        And help url should end with 'getting_started/get_started.html'
         """
-        expected_links = [
-            {
-                'element_css': NAV_HELP_CSS,
-                'text': 'Help',
-                'url': 'http://edx.readthedocs.org/projects/edx-partner-course-staff'
-                       '/en/latest/getting_started/get_started.html',
-                'type': 'course'
-            },
-            {
-                'element_css': '.bit li.action-item a',
-                'text': 'Getting Started with edX Studio',
-                'url': 'http://edx.readthedocs.org/projects/edx-partner-course-staff/'
-                       'en/latest/getting_started/get_started.html',
-                'type': 'course'
-            },
-            {
-                'element_css': NAV_HELP_CSS,
-                'text': 'Help',
-                'url': 'http://edx.readthedocs.org/projects/edx-partner-course-staff/'
-                       'en/latest/getting_started/get_started.html',
-                'type': 'library'
-            },
-            {
-                'element_css': '.bit li.action-item a',
-                'text': 'Getting Started with edX Studio',
-                'url': 'http://edx.readthedocs.org/projects/edx-partner-course-staff/'
-                       'en/latest/getting_started/get_started.html',
-                'type': 'library'
-            },
-            {
-                'element_css': NAV_HELP_CSS,
-                'text': 'Help',
-                'url': 'http://edx.readthedocs.org/projects/edx-partner-course-staff/'
-                       'en/latest/getting_started/get_started.html',
-                'type': 'library tab'
-            }
-        ]
-        for expected_link in expected_links:
-            self.auth_page.visit()
-            self.dashboard_page.visit()
-            if expected_link['type'] == 'course':
-                self.dashboard_page.click_new_course_button()
-            elif expected_link['type'] == 'library':
-                self.dashboard_page.click_new_library()
-            else:
-                self.assertTrue(self.dashboard_page.has_new_library_button)
-                click_css(self.dashboard_page, '#course-index-tabs .libraries-tab', 0, False)
+        self.auth_page.visit()
+        self.dashboard_page.visit()
+        self.assertTrue(self.dashboard_page.has_new_library_button)
+        click_css(self.dashboard_page, '#course-index-tabs .libraries-tab', 0, False)
+        # The href we want to see in anchor help element.
+        href = 'http://edx.readthedocs.org/projects/edx-partner-course-staff/' \
+               'en/latest/getting_started/get_started.html'
 
-            element_css = expected_link['element_css']
-            # Assert that link on DOM element are same as expected.
-            actual_link = get_element(self.dashboard_page, element_css)
-            assert_links(self, expected_link, actual_link)
-            # Click the help link and assert that correct link is opened.
-            click_css(self.dashboard_page, element_css, 0, False)
-            assert_help_is_open(self, expected_link['url'])
+        # Expected attributes of anchor help element
+        expected_link = get_expected_help_element_attributes(href)
+        # Get actual anchor help element from the page.
+        actual_link = get_element(self.dashboard_page, self.dashboard_page.get_nav_help_css())
+        # Assert that 'href' and text are the same as expected.
+        assert_link(self, expected_link, actual_link)
+        # Click the help.
+        self.dashboard_page.click_nav_help()
+        # Assert that opened link is correct
+        assert_opened_help_link_is_correct(self, href)
 
 
 class LibraryHelpTest(StudioLibraryTest):
@@ -279,141 +371,199 @@ class LibraryHelpTest(StudioLibraryTest):
         self.library_page = LibraryPage(self.browser, self.library_key)
         self.library_user_page = LibraryUsersPage(self.browser, self.library_key)
 
-    def test_library_content_and_library_user_access_help(self):
+    def test_library_content_nav_help(self):
         """
-        Scenario: Help links in navigation bar and sidebar are working on content
-        library page(click a library on the Library list page). Also Help link in
-        navigation bar is working on 'User Access' settings page of library.
-
+        Scenario: Help link in navigation bar is working on content
+        library page(click a library on the Library list page).
         Given that I am on the content library page(click a library on the Library list page).
-        And I want help
+        And I want help about the process
         And I click the 'Help' in the navigation bar
         Then Help link should open.
-        And help url should contain 'course/components/libraries.html'
+        And help url should end with 'course/components/libraries.html'
+        """
+        self.library_page.visit()
+        # The href we want to see in anchor help element.
+        href = 'http://edx.readthedocs.org/projects/edx-partner-course-staff/' \
+               'en/latest/course_components/libraries.html'
 
+        # Expected attributes of anchor help element
+        expected_link = get_expected_help_element_attributes(href)
+        # Get actual anchor help element from the page.
+        actual_link = get_element(self.library_page, self.library_page.get_nav_help_css())
+        # Assert that 'href' and text are the same as expected.
+        assert_link(self, expected_link, actual_link)
+        # Click the help.
+        self.library_page.click_nav_help()
+        # Assert that opened link is correct
+        assert_opened_help_link_is_correct(self, href)
+
+    def test_library_content_side_bar_help(self):
+        """
+        Scenario: Help link in sidebar links is working on
+        content library page(click a library on the Library list page).
         Given that I am on the content library page(click a library on the Library list page).
-        And I want help
+        And I want help about the process
         And I click the 'Learn more about content libraries' in the sidebar links
         Then Help link should open.
-        And help url should contain 'course/components/libraries.html'
+        And help url should end with 'course/components/libraries.html'
+        """
+        self.library_page.visit()
+        # The href we want to see in anchor help element.
+        href = 'http://edx.readthedocs.org/projects/edx-partner-course-staff/' \
+               'en/latest/course_components/libraries.html'
 
+        # Expected attributes of anchor help element
+        expected_link = get_expected_help_element_attributes(href, 'Learn more about content libraries')
+        # Get actual anchor help element from the page.
+        actual_link = get_element(self.library_page, self.library_page.get_side_bar_help_css())
+        # Assert that 'href' and text are the same as expected.
+        assert_link(self, expected_link, actual_link)
+        # Click the help.
+        self.library_page.click_side_bar_help()
+        # Assert that opened link is correct
+        assert_opened_help_link_is_correct(self, href)
+
+    def test_library_user_access_setting_nav_help(self):
+        """
+        Scenario: Help link in navigation bar is working on 'User Access'
+         settings page of library.
         Given that I am on the 'User Access' settings page of library.
-        And I want help
+        And I want help about the process
         And I click the 'Help' in the navigation bar
         Then Help link should open.
-        And help url should contain
+        And help url should end with
         'creating_content/libraries.html#give-other-users-access-to-your-library'
         """
-        expected_links = [
-            {
-                'element_css': NAV_HELP_CSS,
-                'text': 'Help',
-                'url': 'http://edx.readthedocs.org/projects/edx-partner-course-staff/'
-                       'en/latest/course_components/libraries.html',
-                'page': self.library_page
-            },
-            {
-                'element_css': SIDE_BAR_HELP_CSS,
-                'text': 'Learn more about content libraries',
-                'url': 'http://edx.readthedocs.org/projects/edx-partner-course-staff/'
-                       'en/latest/course_components/libraries.html',
-                'page': self.library_page
-            },
-            {
-                'element_css': NAV_HELP_CSS,
-                'text': 'Help',
-                'url': 'http://edx.readthedocs.org/projects/edx-partner-course-staff/en/latest'
-                       '/course_components/libraries.html#give-other-users-access-to-your-library',
-                'page': self.library_user_page
-            }
-        ]
-        for expected_link in expected_links:
-            page = expected_link['page']
-            page.visit()
-            element_css = expected_link['element_css']
-            # Assert that link on DOM element are same as expected.
-            actual_link = get_element(page, element_css)
-            assert_links(self, expected_link, actual_link)
-            # Click the help link and assert that correct link is opened.
-            click_css(page, element_css, 0, False)
-            assert_help_is_open(self, expected_link['url'])
+        self.library_user_page.visit()
+        # The href we want to see in anchor help element.
+        href = 'http://edx.readthedocs.org/projects/edx-partner-course-staff/en/' \
+               'latest/course_components/libraries.html#give-other-users-access-to-your-library'
+
+        # Expected attributes of anchor help element
+        expected_link = get_expected_help_element_attributes(href)
+        # Get actual anchor help element from the page.
+        actual_link = get_element(self.library_user_page, self.library_user_page.get_nav_help_css())
+        # Assert that 'href' and text are the same as expected.
+        assert_link(self, expected_link, actual_link)
+        # Click the help.
+        self.library_user_page.click_nav_help()
+        # Assert that opened link is correct
+        assert_opened_help_link_is_correct(self, href)
 
 
-class LibraryImportAndExportHelpTest(StudioLibraryTest):
+class LibraryImportHelpTest(StudioLibraryTest):
     """
     Test help links on a Library import and export pages.
     """
     def setUp(self):
-        super(LibraryImportAndExportHelpTest, self).setUp()
+        super(LibraryImportHelpTest, self).setUp()
         self.library_import_page = ImportLibraryPage(self.browser, self.library_key)
-        self.library_export_page = ExportLibraryPage(self.browser, self.library_key)
 
-    def test_library_import_and_export_help(self):
+    def test_library_import_nav_help(self):
         """
-        Scenario: Help links in navigation and side bar are working on Library import
-        and export pages.
-
+        Scenario: Help link in navigation bar is working on Library import page.
         Given that I am on the Library import page.
         And I want help about the process
         And I click the 'Help' in the navigation bar
         Then Help link should open.
-        And help url should contain 'creating_content/libraries.html#import-a-library'
+        And help url should end with 'creating_content/libraries.html#import-a-library'
+        """
+        self.library_import_page.visit()
+        # The href we want to see in anchor help element.
+        href = 'http://edx.readthedocs.org/projects/edx-partner-course-staff/en/' \
+               'latest/course_components/libraries.html#import-a-library'
 
+        # Expected attributes of anchor help element
+        expected_link = get_expected_help_element_attributes(href)
+        # Get actual anchor help element from the page.
+        actual_link = get_element(self.library_import_page, self.library_import_page.get_nav_help_css())
+        # Assert that 'href' and text are the same as expected.
+        assert_link(self, expected_link, actual_link)
+        # Click the help.
+        self.library_import_page.click_nav_help()
+        # Assert that opened link is correct
+        assert_opened_help_link_is_correct(self, href)
+
+    def test_library_import_side_bar_help(self):
+        """
+        Scenario: Help link in sidebar links is working on Library import page.
         Given that I am on the Library import page.
         And I want help about the process
         And I click the 'Learn more about importing a library' in the sidebar links
         Then Help link should open.
-        And help url should contain 'creating_content/libraries.html#import-a-library'
+        And help url should end with 'creating_content/libraries.html#import-a-library'
+        """
+        self.library_import_page.visit()
+        # The href we want to see in anchor help element.
+        href = 'http://edx.readthedocs.org/projects/edx-partner-course-staff/en/' \
+               'latest/course_components/libraries.html#import-a-library'
 
+        # Expected attributes of anchor help element
+        expected_link = get_expected_help_element_attributes(href, 'Learn more about importing a library')
+        # Get actual anchor help element from the page.
+        actual_link = get_element(self.library_import_page, self.library_import_page.get_side_bar_help_css())
+        # Assert that 'href' and text are the same as expected.
+        assert_link(self, expected_link, actual_link)
+        # Click the help.
+        self.library_import_page.click_side_bar_help()
+        # Assert that opened link is correct
+        assert_opened_help_link_is_correct(self, href)
+
+
+class LibraryExportHelpTest(StudioLibraryTest):
+    """
+    Test help links on a Library export pages.
+    """
+    def setUp(self):
+        super(LibraryExportHelpTest, self).setUp()
+        self.library_export_page = ExportLibraryPage(self.browser, self.library_key)
+
+    def test_library_export_nav_help(self):
+        """
+        Scenario: Help link in navigation bar is working on Library export page.
         Given that I am on the Library export page.
         And I want help about the process
         And I click the 'Help' in the navigation bar
         Then Help link should open.
-        And help url should contain 'creating_content/libraries.html#export-a-library'
+        And help url should end with 'creating_content/libraries.html#export-a-library'
+        """
+        self.library_export_page.visit()
+        # The href we want to see in anchor help element.
+        href = 'http://edx.readthedocs.org/projects/edx-partner-course-staff/en/' \
+               'latest/course_components/libraries.html#export-a-library'
 
+        # Expected attributes of anchor help element
+        expected_link = get_expected_help_element_attributes(href)
+        # Get actual anchor help element from the page.
+        actual_link = get_element(self.library_export_page, self.library_export_page.get_nav_help_css())
+        # Assert that 'href' and text are the same as expected.
+        assert_link(self, expected_link, actual_link)
+        # Click the help.
+        self.library_export_page.click_nav_help()
+        # Assert that opened link is correct
+        assert_opened_help_link_is_correct(self, href)
+
+    def test_library_export_side_bar_help(self):
+        """
+        Scenario: Help link in sidebar links is working on Library export page.
         Given that I am on the Library export page.
         And I want help about the process
         And I click the 'Learn more about exporting a library' in the sidebar links
         Then Help link should open.
-        And help url should contain 'creating_content/libraries.html#export-a-library'
+        And help url should end with 'creating_content/libraries.html#export-a-library'
         """
-        expected_links = [
-            {
-                'element_css': NAV_HELP_CSS,
-                'text': 'Help',
-                'url': 'http://edx.readthedocs.org/projects/edx-partner-course-staff/en/'
-                       'latest/course_components/libraries.html#import-a-library',
-                'page': self.library_import_page
-            },
-            {
-                'element_css': SIDE_BAR_HELP_CSS,
-                'text': 'Learn more about importing a library',
-                'url': 'http://edx.readthedocs.org/projects/edx-partner-course-staff/en/'
-                       'latest/course_components/libraries.html#import-a-library',
-                'page': self.library_import_page
-            },
-            {
-                'element_css': NAV_HELP_CSS,
-                'text': 'Help',
-                'url': 'http://edx.readthedocs.org/projects/edx-partner-course-staff/en/'
-                       'latest/course_components/libraries.html#export-a-library',
-                'page': self.library_export_page
-            },
-            {
-                'element_css': SIDE_BAR_HELP_CSS,
-                'text': 'Learn more about exporting a library',
-                'url': 'http://edx.readthedocs.org/projects/edx-partner-course-staff/en/'
-                       'latest/course_components/libraries.html#export-a-library',
-                'page': self.library_export_page
-            }
-        ]
-        for expected_link in expected_links:
-            page = expected_link['page']
-            page.visit()
-            element_css = expected_link['element_css']
-            # Assert that link on DOM element are same as expected.
-            actual_link = get_element(page, element_css)
-            assert_links(self, expected_link, actual_link)
-            # Click the help link and assert that correct link is opened.
-            click_css(page, element_css, 0, False)
-            assert_help_is_open(self, expected_link['url'])
+        self.library_export_page.visit()
+        # The href we want to see in anchor help element.
+        href = 'http://edx.readthedocs.org/projects/edx-partner-course-staff/en/' \
+               'latest/course_components/libraries.html#export-a-library'
+
+        # Expected attributes of anchor help element
+        expected_link = get_expected_help_element_attributes(href, 'Learn more about exporting a library')
+        # Get actual anchor help element from the page.
+        actual_link = get_element(self.library_export_page, self.library_export_page.get_side_bar_help_css())
+        # Assert that 'href' and text are the same as expected.
+        assert_link(self, expected_link, actual_link)
+        # Click the help.
+        self.library_export_page.click_side_bar_help()
+        # Assert that opened link is correct
+        assert_opened_help_link_is_correct(self, href)

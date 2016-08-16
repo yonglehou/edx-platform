@@ -6,6 +6,8 @@ from bok_choy.page_object import PageObject
 from common.test.acceptance.tests.helpers import disable_animations
 from common.test.acceptance.pages.studio.course_page import CoursePage
 from common.test.acceptance.pages.studio import BASE_URL
+from common.test.acceptance.pages.studio.utils import NAV_HELP_CSS
+from common.test.acceptance.pages.common.utils import click_css
 
 
 def wait_for_ajax_or_reload(browser):
@@ -161,6 +163,18 @@ class LibraryUsersPage(UsersPageMixin):
         URL to the "User Access" page for the given library.
         """
         return "{}/library/{}/team/".format(BASE_URL, unicode(self.locator))
+
+    def get_nav_help_css(self):
+        """
+        Returns the unique css of nav help DOM element
+        """
+        return NAV_HELP_CSS
+
+    def click_nav_help(self):
+        """
+        Clicks on the help link in the navigation bar.
+        """
+        click_css(page=self, css=NAV_HELP_CSS, require_notification=False)
 
 
 class CourseTeamPage(CoursePage, UsersPageMixin):

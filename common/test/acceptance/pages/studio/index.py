@@ -7,6 +7,8 @@ from selenium.webdriver import ActionChains
 from common.test.acceptance.pages.studio import BASE_URL
 from common.test.acceptance.pages.studio.login import LoginPage
 from common.test.acceptance.pages.studio.signup import SignupPage
+from common.test.acceptance.pages.studio.utils import NAV_HELP_CSS, SIDE_BAR_HELP_AS_LIST_ITEM
+from common.test.acceptance.pages.common.utils import click_css
 
 
 class HeaderMixin(object):
@@ -269,12 +271,60 @@ class DashboardPage(PageObject):
         )
         return self.q(css='#settings-language-value')
 
+    def get_nav_help_css(self):
+        """
+        Returns the unique css of nav help DOM element
+        """
+        return NAV_HELP_CSS
+
+    def click_nav_help(self):
+        """
+        Clicks on the help link in the navigation bar.
+        """
+        click_css(page=self, css=NAV_HELP_CSS, require_notification=False)
+
+    def get_side_bar_help_css(self):
+        """
+        Returns the unique css of side bar help DOM element
+        """
+        return SIDE_BAR_HELP_AS_LIST_ITEM
+
+    def click_side_bar_help(self):
+        """
+        Clicks on the help link in the side bar.
+        """
+        click_css(page=self, css=SIDE_BAR_HELP_AS_LIST_ITEM, require_notification=False)
+
 
 class HomePage(DashboardPage):
     """
     Home page for Studio when logged in.
     """
     url = BASE_URL + "/home/"
+
+    def get_nav_help_css(self):
+        """
+        Returns the unique css of nav help DOM element
+        """
+        return NAV_HELP_CSS
+
+    def click_nav_help(self):
+        """
+        Clicks on the help link in the navigation bar.
+        """
+        click_css(page=self, css=NAV_HELP_CSS, require_notification=False)
+
+    def get_side_bar_help_css(self):
+        """
+        Returns the unique css of side bar help DOM element
+        """
+        return SIDE_BAR_HELP_AS_LIST_ITEM
+
+    def click_side_bar_help(self):
+        """
+        Clicks on the help link in the side bar.
+        """
+        click_css(page=self, css=SIDE_BAR_HELP_AS_LIST_ITEM, require_notification=False)
 
 
 class DashboardPageWithPrograms(DashboardPage):

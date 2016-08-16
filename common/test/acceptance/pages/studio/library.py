@@ -10,7 +10,8 @@ from common.test.acceptance.pages.studio.container import XBlockWrapper
 from common.test.acceptance.pages.studio.users import UsersPageMixin
 from common.test.acceptance.pages.studio.pagination import PaginatedMixin
 from selenium.webdriver.common.keys import Keys
-
+from common.test.acceptance.pages.studio.utils import NAV_HELP_CSS, SIDE_BAR_HELP_CSS
+from common.test.acceptance.pages.common.utils import click_css
 from common.test.acceptance.pages.common.utils import confirm_prompt, wait_for_notification
 
 from common.test.acceptance.pages.studio import BASE_URL
@@ -36,6 +37,30 @@ class LibraryPage(PageObject):
         Returns True iff the browser has loaded the library edit page.
         """
         return self.q(css='body.view-library').present
+
+    def get_nav_help_css(self):
+        """
+        Returns the unique css of nav help DOM element
+        """
+        return NAV_HELP_CSS
+
+    def click_nav_help(self):
+        """
+        Clicks on the help link in the navigation bar.
+        """
+        click_css(page=self, css=NAV_HELP_CSS, require_notification=False)
+
+    def get_side_bar_help_css(self):
+        """
+        Returns the unique css of side bar help DOM element
+        """
+        return SIDE_BAR_HELP_CSS
+
+    def click_side_bar_help(self):
+        """
+        Clicks on the help link in the side bar.
+        """
+        click_css(page=self, css=SIDE_BAR_HELP_CSS, require_notification=False)
 
 
 class LibraryEditPage(LibraryPage, PaginatedMixin, UsersPageMixin):

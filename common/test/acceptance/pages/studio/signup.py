@@ -4,7 +4,7 @@ Signup page for studio
 from bok_choy.page_object import PageObject
 
 from common.test.acceptance.pages.studio import BASE_URL
-from common.test.acceptance.pages.studio.utils import set_input_value
+from common.test.acceptance.pages.studio.utils import set_input_value, NAV_HELP_NOT_SIGNED_IN_CSS
 from common.test.acceptance.pages.common.utils import click_css
 
 
@@ -28,3 +28,15 @@ class SignupPage(PageObject):
         click_css(page=self, css='#tos', require_notification=False)
         click_css(page=self, css='#submit', require_notification=False)
         self.wait_for_element_absence('#submit', 'Submit button is gone.')
+
+    def get_nav_help_css(self):
+        """
+        Returns the unique css of nav help DOM element
+        """
+        return NAV_HELP_NOT_SIGNED_IN_CSS
+
+    def click_nav_help(self):
+        """
+        Clicks on the help link in the navigation bar.
+        """
+        click_css(page=self, css=NAV_HELP_NOT_SIGNED_IN_CSS, require_notification=False)

@@ -9,6 +9,12 @@ from bok_choy.promise import EmptyPromise
 from common.test.acceptance.pages.common.utils import click_css, wait_for_notification
 
 
+NAV_HELP_NOT_SIGNED_IN_CSS = '.nav-item.nav-not-signedin-help a'
+NAV_HELP_CSS = '.nav-item.nav-account-help a'
+SIDE_BAR_HELP_AS_LIST_ITEM = '.bit li.action-item a'
+SIDE_BAR_HELP_CSS = '.bit.external-help a'
+
+
 @js_defined('window.jQuery')
 def press_the_notification_button(page, name):
     # Because the notification uses a CSS transition,
@@ -251,13 +257,6 @@ def click_studio_help(page):
 def studio_help_links(page):
     """Return the list of Studio help links in the page footer."""
     return page.q(css='.support .list-actions a').results
-
-
-def studio_help_links_in_nav_bar(page):
-    """
-    Returns the list studio help links in navigation bar
-    """
-    return page.q(css='.nav-item.nav-account-help a').results
 
 
 def get_element(page, css):

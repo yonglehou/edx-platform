@@ -363,17 +363,33 @@ def get_url_with_changed_domain(url):
     return url.replace('.org/', '.io/')
 
 
-def assert_links(test, expected_link, actual_link):
+def assert_link(test, expected_link, actual_link):
     """
-    Assert that 'href' and text are the same as expected.
+    Assert that 'href' and text inside help DOM element are correct.
 
     Arguments:
         test: Test on which links are being tested.
         expected_link (dict): The expected link attributes.
         actual_link (dict): The actual link attribute on page.
     """
-    test.assertEqual(expected_link['url'], actual_link.get_attribute('href'))
+    test.assertEqual(expected_link['href'], actual_link.get_attribute('href'))
     test.assertEqual(expected_link['text'], actual_link.text)
+
+
+def assert_opened_help_link_is_correct(test, url):
+    """
+    Asserts that url of browser when help link is clicked is correct.
+    Arguments:
+        test (WebAppTest): test calling this method.
+        url (str): url to verify.
+    """
+    test.browser.switch_to_window(test.browser.window_handles[-1])
+    # Assert that url in the browser is the same.
+    # Please note that .org domain in href attribute of help anchor DOM element
+    # is changed into .io domain. This is because browser is redirected from .org
+    # domain to .io domain.
+    test.assertEqual(get_url_with_changed_domain(url), test.browser.current_url)
+    test.assertNotIn('Maze Found', test.browser.title)
 
 
 def assert_help_is_open(test, url):
@@ -783,6 +799,26 @@ def create_user_partition_json(partition_id, name, description, groups, scheme="
     return UserPartition(
         partition_id, name, description, groups, MockUserPartitionScheme(scheme)
     ).to_json()
+
+
+def get_expected_help_element_attributes(url, help_text='Help'):
+    """
+    Returns the expected help anchor element attributes
+
+    We use the output of it to match the actual anchor
+    elements on the page.
+
+    Arguments:
+        url (str): The url we want to see in the help anchor HTML element
+        help_text (str): The text inside the help anchor HTML element
+
+    Returns:
+        dict: Dictionary of attributes.
+    """
+    return {
+        'href': url,
+        'text': help_text
+    }
 
 
 class TestWithSearchIndexMixin(object):

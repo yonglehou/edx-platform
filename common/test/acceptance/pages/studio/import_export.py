@@ -14,6 +14,7 @@ from common.test.acceptance.pages.common.utils import click_css
 from common.test.acceptance.pages.studio.library import LibraryPage
 from common.test.acceptance.pages.studio.course_page import CoursePage
 from common.test.acceptance.pages.studio import BASE_URL
+from common.test.acceptance.pages.studio.utils import NAV_HELP_CSS, SIDE_BAR_HELP_CSS
 
 
 class TemplateCheckMixin(object):
@@ -115,6 +116,29 @@ class ExportLibraryPage(ExportMixin, TemplateCheckMixin, LibraryLoader, LibraryP
     """
     Export page for Libraries
     """
+    def get_nav_help_css(self):
+        """
+        Returns the unique css of nav help DOM element
+        """
+        return NAV_HELP_CSS
+
+    def click_nav_help(self):
+        """
+        Clicks on the help link in the navigation bar.
+        """
+        click_css(page=self, css=NAV_HELP_CSS, require_notification=False)
+
+    def get_side_bar_help_css(self):
+        """
+        Returns the unique css of side bar help DOM element
+        """
+        return SIDE_BAR_HELP_CSS
+
+    def click_side_bar_help(self):
+        """
+        Clicks on the help link in the side bar.
+        """
+        click_css(page=self, css=SIDE_BAR_HELP_CSS, require_notification=False)
 
 
 class ImportMixin(object):
@@ -294,3 +318,26 @@ class ImportLibraryPage(ImportMixin, TemplateCheckMixin, LibraryLoader, LibraryP
     """
     Import page for Libraries
     """
+    def get_nav_help_css(self):
+        """
+        Returns the unique css of nav help DOM element
+        """
+        return NAV_HELP_CSS
+
+    def click_nav_help(self):
+        """
+        Clicks on the help link in the navigation bar.
+        """
+        click_css(page=self, css=NAV_HELP_CSS, require_notification=False)
+
+    def get_side_bar_help_css(self):
+        """
+        Returns the unique css of side bar help DOM element
+        """
+        return SIDE_BAR_HELP_CSS
+
+    def click_side_bar_help(self):
+        """
+        Clicks on the help link in the side bar.
+        """
+        click_css(page=self, css=SIDE_BAR_HELP_CSS, require_notification=False)
