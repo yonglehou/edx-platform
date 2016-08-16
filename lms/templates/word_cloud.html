@@ -20,25 +20,26 @@
     % endif
 
         % for row in range(num_inputs):
-            <label for="word_cloud_${element_id}_input_${row}" class="sr">${row + 1}/${num_inputs}</label>
-            <input
-                id="word_cloud_${element_id}_input_${row}"
-                class="input-cloud"
-                ${'style="display: none;"' if submitted else ''}
-                type="text"
-                size="40"
-            />
+            <label>
+                <span class="sr">${row + 1}/${num_inputs}</span>
+                <input
+                    class="input-cloud"
+                    ${'style="display: none;"' if submitted else ''}
+                    type="text"
+                    size="40"
+                />
+            </label>
         % endfor
 
         <div class="action">
-            <input class="save" type="button" value="${_('Save')}" />
+            <button class="save" type="button">${_('Save')}</button>
         </div>
     </div>
 
     <div id="result_cloud_section_${element_id}" class="result_cloud_section">
         <div class="word_cloud"></div>
         <p class="total_num_words"></p>
-        <p>${'Your words were'}:</p>
+        <p>${_('Your words were:')}</p>
         <ul class="your_words"></ul>
     </div>
 

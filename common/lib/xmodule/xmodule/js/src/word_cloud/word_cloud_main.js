@@ -73,7 +73,7 @@
                 }
             });
 
-            $(el).find('input.save').on('click', function() {
+            $(el).find('.save').on('click', function() {
                 _this.submitAnswer();
             });
         }; // End-of: var WordCloudMain = function(el) {
