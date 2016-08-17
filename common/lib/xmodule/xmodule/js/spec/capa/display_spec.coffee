@@ -59,7 +59,7 @@ describe 'Problem', ->
       expect($('div.action button')).toHandleWith 'click', @problem.refreshAnswers
 
     it 'bind the submit button', ->
-      expect($('div.action button.submit')).toHandleWith 'click', @problem.submit_fd
+      expect($('.action .submit')).toHandleWith 'click', @problem.submit_fd
 
     it 'bind the reset button', ->
       expect($('div.action button.reset')).toHandleWith 'click', @problem.reset
@@ -81,7 +81,7 @@ describe 'Problem', ->
       $(@).html readFixtures('problem_content_1240.html')
 
     it 'bind the submit button', ->
-      expect($('div.action button.submit')).toHandleWith 'click', @problem.submit_fd
+      expect($('.action .submit')).toHandleWith 'click', @problem.submit_fd
 
     it 'bind the show button', ->
       expect($('div.action button.show')).toHandleWith 'click', @problem.show
@@ -268,7 +268,11 @@ describe 'Problem', ->
   describe 'submit button on problems', ->
     beforeEach ->
       @problem = new Problem($('.xblock-student_view'))
-      @submitDisabled = (v) -> expect(@problem.submitButton.hasClass('is-disabled')).toBe(v)
+      @submitDisabled = (v) =>
+        if v
+          expect(@problem.submitButton).toHaveAttr('disabled')
+        else
+          expect(@problem.submitButton).not.toHaveAttr('disabled')
 
     describe 'some basic tests for submit button', ->
       it 'should become enabled after a value is entered into the text box', ->

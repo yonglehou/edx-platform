@@ -33,7 +33,7 @@ class @Problem
     @reviewButton = @$('div.action .review-btn')
     @reviewButton.click @review_question_click
     @submitButton = @$('div.action button.submit')
-    @submitButtonLabel = @$('div.action button.submit span.submit-label')
+    @submitButtonLabel = @$('.action .submit .submit-label')
     @submitButtonSubmitText = @submitButtonLabel.text()
     @submitButtonSubmittingText = @submitButton.data('submitting')
     @submitButton.click @submit_fd
