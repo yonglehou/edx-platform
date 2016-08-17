@@ -17,9 +17,8 @@
         'gettext',
         'edx-ui-toolkit/js/utils/html-utils'
     ], function(gettext, HtmlUtils) {
-
-        function generateUniqueId(word_cloud_id, unique_id) {
-            return '_wc_' + word_cloud_id + '_' + unique_id;
+        function generateUniqueId(wordCloudId, uniqueId) {
+            return '_wc_' + wordCloudId + '_' + uniqueId;
         }
 
         /**
@@ -259,10 +258,10 @@
             HtmlUtils.setHtml(
                 cloudSectionEl.find('.your_words').end().find('.total_num_words'),
                 HtmlUtils.interpolateHtml(
-                    gettext("{start_strong}{total}{end_strong} words submitted in total."),
+                    gettext('{start_strong}{total}{end_strong} words submitted in total.'),
                     {
-                        start_strong: HtmlUtils.HTML("<strong>"),
-                        end_strong: HtmlUtils.HTML("</strong>"),
+                        start_strong: HtmlUtils.HTML('<strong>'),
+                        end_strong: HtmlUtils.HTML('</strong>'),
                         total: response.total_count
                     }
                 )
@@ -280,10 +279,10 @@
                     .data(words)
                     .enter()
                     .append('g')
-                    .attr('data-id', function(d) {
+                    .attr('data-id', function() {
                         return Math.floor(Math.random() * (999 - 1 + 1)) + 1;
                     })
-                    .attr('aria-describedby', function(d) {
+                    .attr('aria-describedby', function() {
                         return HtmlUtils.interpolateHtml(
                             gettext('text_word_{word} title_word_{word}'),
                             {
@@ -294,7 +293,7 @@
 
             groupEl
                 .append('title')
-                .attr('id', function(d) {
+                .attr('id', function() {
                     return HtmlUtils.interpolateHtml(
                         gettext('title_word_{word}'),
                         {
@@ -318,7 +317,7 @@
 
             groupEl
                 .append('text')
-                .attr('id', function(d) {
+                .attr('id', function() {
                     return HtmlUtils.interpolateHtml(
                         gettext('text_word_{word}'),
                         {
